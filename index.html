@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine - Feb 14</title>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #fff;
+            --bg-color: linear-gradient(135deg, #1a0014 0%, #2d0033 50%, #1a0014 100%);
+            --bg-envelope-color: #fff5f7;
+            --envelope-tab: #ffe4ee;
+            --envelope-cover: #ffb3d9;
+            --shadow-color: rgba(220, 20, 60, 0.3);
+            --txt-color: #8b1538;
+            --heart-color: #ff1744;
+            --accent-pink: #ff6b9d;
+            --light-pink: #ffc0d9;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Music Control */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 200;
+            background: var(--heart-color);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 5px 20px rgba(255, 23, 68, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(255, 23, 68, 0.6);
+        }
+
+        .music-control.off {
+            background: #ccc;
+            opacity: 0.7;
+        }
+
+        /* Floating Hearts Background */
+        .hearts-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.3;
+            animation: float-up 8s infinite ease-in;
+        }
+
+        @keyframes float-up {
+            0% {
+                opacity: 0.3;
+                transform: translateY(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+
+        /* Screen Containers */
+        .screen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+            animation: fadeIn 0.6s ease;
+            z-index: 50;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ===== ENVELOPE SCREEN ===== */
+        .envelope-wrapper {
+            background: var(--bg-envelope-color);
+            box-shadow: 0 20px 60px var(--shadow-color), 
+                        0 0 50px rgba(255, 23, 68, 0.2);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            margin: auto;
+        }
+
+        .envelope-wrapper:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px var(--shadow-color),
+                        0 0 70px rgba(255, 23, 68, 0.3);
+        }
+
+        .envelope {
+            position: relative;
+            width: 350px;
+            height: 260px;
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            z-index: 2;
+            border-top: 145px solid var(--envelope-tab);
+            border-right: 175px solid transparent;
+            border-left: 175px solid transparent;
+            transform-origin: top;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.7s;
+        }
+
+        .envelope::after {
+            content: "";
+            position: absolute;
+            z-index: 2;
+            width: 0px;
+            height: 0px;
+            border-top: 145px solid transparent;
+            border-right: 175px solid var(--envelope-cover);
+            border-bottom: 115px solid var(--envelope-cover);
+            border-left: 175px solid var(--envelope-cover);
+        }
+
+        .envelope > .letter {
+            position: absolute;
+            right: 15%;
+            bottom: 0;
+            width: 70%;
+            height: 85%;
+            background: linear-gradient(135deg, #fff 0%, #fff9fb 100%);
+            text-align: center;
+            transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) 0s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 20px 15px;
+            border-radius: 5px;
+            overflow: hidden;
+            border: 2px solid var(--light-pink);
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .envelope > .letter::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--heart-color), transparent);
+        }
+
+        .letter-content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .letter-header {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .letter-header h2 {
+            color: var(--txt-color);
+            font-size: 14px;
+            margin-bottom: 3px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .letter > .text {
+            font-family: 'Georgia', serif;
+            color: var(--txt-color);
+            text-align: center;
+            font-size: 10px;
+            line-height: 1.3;
+            letter-spacing: 0.2px;
+        }
+
+        .letter > .text p {
+            margin: 5px 0;
+            font-style: italic;
+        }
+
+        .heart {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            width: 18px;
+            height: 18px;
+            background: var(--heart-color);
+            z-index: 4;
+            transform: translate(-50%, -20%) rotate(45deg);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 1s;
+            box-shadow: 0 4px 15px rgba(255, 23, 68, 0.4);
+            cursor: pointer;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: var(--heart-color);
+            border-radius: 50%;
+        }
+
+        .heart::before {
+            top: -9px;
+        }
+
+        .heart::after {
+            right: 9px;
+        }
+
+        .flap > .envelope::before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .flap > .envelope > .letter {
+            bottom: 230px;
+            right: 15%;
+            width: 70%;
+            transform: none;
+            transition-delay: 1.3s;
+        }
+
+        .flap > .heart {
+            transform: rotate(90deg);
+            transition-delay: 0.4s;
+            opacity: 0;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--txt-color);
+            font-size: 15px;
+            font-style: italic;
+            animation: pulse 2s ease-in-out infinite;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* ===== YES/NO MODAL ===== */
+        .modal-overlay {
+            display: none !important;
+            position: fixed;
+            bottom: -500px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 30px);
+            max-width: 450px;
+            background: transparent;
+            z-index: 150;
+            padding: 0 15px;
+            pointer-events: auto;
+        }
+
+        .modal-overlay.active {
+            display: block !important;
+            animation: slideUpFromBottom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes slideUpFromBottom {
+            from {
+                bottom: -500px;
+                opacity: 0;
+            }
+            to {
+                bottom: 20px;
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #fff 0%, #fff9fb 100%);
+            border-radius: 15px;
+            padding: 22px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            border: 3px solid var(--heart-color);
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: visible;
+            z-index: 200;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-inner {
+            position: relative;
+            z-index: 2;
+        }
+
+        .modal-gif {
+            width: 100%;
+            max-width: 120px;
+            height: auto;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content h1 {
+            color: var(--txt-color);
+            font-size: 18px;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content .heart-deco {
+            font-size: 14px;
+            margin: 5px 0;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .modal-content p {
+            color: var(--txt-color);
+            font-size: 11px;
+            line-height: 1.3;
+            margin: 5px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            z-index: 200;
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 40px);
+            max-width: 500px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .button-group.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+            z-index: 200;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, var(--heart-color) 0%, var(--accent-pink) 100%);
+            color: white;
+            min-width: 110px;
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 23, 68, 0.5);
+        }
+
+        .btn-no {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ff1744 100%);
+            color: white;
+            min-width: 110px;
+        }
+
+        .btn-no:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 23, 68, 0.5);
+        }
+
+        .btn-no.broken {
+            background: #999;
+            color: white;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-no.broken:hover {
+            transform: none;
+            background: #999;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== LOCATION SCREEN ===== */
+        .location-container {
+            background: linear-gradient(135deg, #fff 0%, #fff9fb 100%);
+            border-radius: 15px;
+            padding: 30px 25px;
+            max-width: 500px;
+            width: 95%;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--heart-color);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .location-container h1 {
+            color: var(--txt-color);
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .location-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: white;
+            border: 2px solid var(--light-pink);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: var(--txt-color);
+        }
+
+        .radio-label:hover {
+            border-color: var(--heart-color);
+            background: #fff9fb;
+            transform: translateX(5px);
+        }
+
+        .radio-label input[type="radio"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--heart-color);
+        }
+
+        .radio-label input[type="radio"]:checked + span {
+            color: var(--heart-color);
+            font-weight: bold;
+        }
+
+        /* ===== ACTIVITY SCREEN ===== */
+        .activity-container {
+            background: linear-gradient(135deg, #fff 0%, #fff9fb 100%);
+            border-radius: 15px;
+            padding: 30px 25px;
+            max-width: 500px;
+            width: 95%;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--heart-color);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .activity-container h1 {
+            color: var(--txt-color);
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-container .subtitle {
+            text-align: center;
+            color: var(--accent-pink);
+            font-size: 12px;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .activity-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 9px;
+            margin-bottom: 25px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background: white;
+            border: 2px solid var(--light-pink);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            color: var(--txt-color);
+        }
+
+        .checkbox-label:hover {
+            border-color: var(--heart-color);
+            background: #fff9fb;
+            transform: translateX(5px);
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            margin-right: 10px;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: var(--heart-color);
+        }
+
+        /* ===== RECEIPT SCREEN ===== */
+        .receipt-container {
+            background: linear-gradient(135deg, #fff 0%, #fff9fb 100%);
+            border-radius: 15px;
+            padding: 30px 25px;
+            max-width: 500px;
+            width: 95%;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--heart-color);
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .receipt-header {
+            font-size: 28px;
+            margin-bottom: 15px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        .receipt-title {
+            color: var(--txt-color);
+            font-size: 24px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .receipt-content {
+            background: white;
+            border: 2px dashed var(--light-pink);
+            border-radius: 8px;
+            padding: 18px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .receipt-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            color: var(--txt-color);
+            font-size: 12px;
+            border-bottom: 1px dotted var(--light-pink);
+            padding-bottom: 6px;
+        }
+
+        .receipt-line strong {
+            color: var(--heart-color);
+        }
+
+        .receipt-gif {
+            width: 100%;
+            max-width: 180px;
+            height: auto;
+            margin: 15px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===== FINAL SCREEN ===== */
+        .final-container {
+            background: linear-gradient(135deg, #fff 0%, #fff9fb 100%);
+            border-radius: 15px;
+            padding: 30px 25px;
+            max-width: 500px;
+            width: 95%;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--heart-color);
+            text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .final-emoji {
+            font-size: 70px;
+            margin-bottom: 15px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        .final-title {
+            color: var(--txt-color);
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .final-gif {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            margin: 15px auto;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .final-message {
+            color: var(--txt-color);
+            font-size: 14px;
+            font-family: 'Georgia', serif;
+            margin: 15px 0;
+            line-height: 1.6;
+            letter-spacing: 0.4px;
+        }
+
+        /* ===== BUTTON STYLES ===== */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--heart-color) 0%, var(--accent-pink) 100%);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            box-shadow: 0 4px 15px rgba(255, 23, 68, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 23, 68, 0.5);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            padding: 10px 24px;
+            background: white;
+            color: var(--txt-color);
+            border: 2px solid var(--heart-color);
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            background: var(--light-pink);
+        }
+
+        .btn-download {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.5);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 101;
+        }
+
+        @media (max-width: 600px) {
+            .envelope {
+                width: 280px;
+                height: 210px;
+            }
+
+            .envelope::before {
+                border-top: 115px solid var(--envelope-tab);
+                border-right: 140px solid transparent;
+                border-left: 140px solid transparent;
+            }
+
+            .envelope::after {
+                border-top: 115px solid transparent;
+                border-right: 140px solid var(--envelope-cover);
+                border-bottom: 95px solid var(--envelope-cover);
+                border-left: 140px solid var(--envelope-cover);
+            }
+
+            .modal-overlay {
+                max-width: calc(100% - 30px);
+            }
+
+            .location-container,
+            .activity-container,
+            .receipt-container,
+            .final-container {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            .music-control {
+                width: 45px;
+                height: 45px;
+                font-size: 20px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-pink);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--heart-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-pink);
+        }
+        hr.rounded {
+  border: 3px solid #007bff;
+  border-radius: 2px;
+}
+
+    </style>
+</head>
+<body>
+    <!-- Music Control Button -->
+    <button class="music-control" id="musicToggle" title="Toggle Music">🔊</button>
+
+    <!-- Background Audio -->
+    <audio id="bgMusic" loop>
+        <source src="assets/New_West_-_Those_Eyes_CeeNaija.com_.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Floating Hearts Background -->
+    <div class="hearts-background" id="heartsBackground"></div>
+
+    <!-- ===== SCREEN 1: ENVELOPE + YES/NO ===== -->
+    <div class="screen active" id="envelopeScreen">
+        <div class="container">
+            <div class="envelope-wrapper" id="envelopeWrapper">
+                <div class="envelope">
+                    <div class="letter" id="letter">
+                        <div class="letter-content">
+                            <div class="letter-header">
+                                <h4>💌 Something I Wanted to Ask You 💌</h4>
+                            </div>
+
+                            <hr>
+
+                            <div class="text">
+                <p>
+    I know things weren’t okay between us before, and I know we both needed time.
+    I’m really grateful that we’re okay now, even if we’re not the same as before.
+</p>
+
+<p>
+    Valentine’s Day made me realize something.
+</p>
+
+<p>
+    Maybe this could be a chance for us to talk
+    no pressure, no expectations.
+</p>
+                                <p style="font-size: 11px; margin-top: 8px;">
+                                    🌹 Would you like to spend Valentine’s Day with me? 🌹
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="heart" id="heart"></div>
+                <div class="hint">💝 Click to open 💝</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- YES/NO Buttons (Fixed position on main background) -->
+    <div class="button-group" id="buttonGroup">
+        <button class="btn btn-yes" id="btnYes"><span>YES! 💕</span></button>
+        <button class="btn btn-no" id="btnNo"><span>NO</span></button>
+    </div>
+
+    <!-- ===== SCREEN 3: LOCATION SELECTION ===== -->
+    <div class="screen" id="locationScreen">
+        <div class="location-container">
+            <h1>📍 Where? 📍</h1>
+            <p style="text-align: center; color: var(--accent-pink); margin-bottom: 20px; font-style: italic; font-size: 12px;">
+                Choose one location
+            </p>
+            
+            <div class="location-options">
+                <label class="radio-label">
+                    <input type="radio" name="location" value="Beach" id="locBeach">
+                    <span>🏖️ Beach</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="location" value="Mall" id="locMall">
+                    <span>🛍️ Mall</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="location" value="Park" id="locPark">
+                    <span>🌳 Park</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="location" value="Cafe" id="locCafe">
+                    <span>☕ Cafe</span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="location" value="Restaurant" id="locRestaurant">
+                    <span>🍽️ Restaurant</span>
+                </label>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-primary" id="btnContinue" disabled>Continue</button>
+                <button class="btn-secondary" id="btnBackLocation">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SCREEN 4: ACTIVITY SELECTION ===== -->
+    <div class="screen" id="activityScreen">
+        <div class="activity-container">
+            <h1 id="locationTitle">What to do?</h1>
+            <p class="subtitle">Select activities you like</p>
+            
+            <div class="activity-options" id="activityOptions">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-primary" id="btnContinueActivity" disabled>Continue</button>
+                <button class="btn-secondary" id="btnBackActivity">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SCREEN 5: RECEIPT ===== -->
+    <div class="screen" id="receiptScreen">
+        <div class="receipt-container">
+            <div class="receipt-header">🎉 DATE RECEIPT 🎉</div>
+            <div class="receipt-title">Valentine's Plan</div>
+            
+            <div class="receipt-content">
+                <div class="receipt-line">
+                    <strong>Date:</strong>
+                    <span>Feb 14, 2025</span>
+                </div>
+                <div class="receipt-line">
+                    <strong>Location:</strong>
+                    <span id="receiptLocation">-</span>
+                </div>
+                <div class="receipt-line">
+                    <strong>Activities:</strong>
+                    <span id="receiptActivities">-</span>
+                </div>
+                <div class="receipt-line">
+                    <strong>With:</strong>
+                    <span>You 💕</span>
+                </div>
+            </div>
+
+            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExY3Roa2t3dHd3NzZkdW9qODVrdWwwZDEyMnAwcHN3dmxkaWk3NXliNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26FLdmIp6wJr91JAI/giphy.gif" alt="Celebration" class="receipt-gif">
+
+            <p style="color: var(--txt-color); font-style: italic; margin: 12px 0; font-size: 12px;">
+                I can't wait to spend it with you! 💕
+            </p>
+
+            <div class="btn-group">
+                <button class="btn-download" id="btnDownload">📥 Download</button>
+                <button class="btn-primary" id="btnNext">Next</button>
+                <!-- <button class="btn-secondary" id="btnBackReceipt">Back</button> -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SCREEN 6: FINAL ===== -->
+    <div class="screen" id="finalScreen">
+        <div class="final-container">
+            <div class="final-emoji">💕</div>
+            <div class="final-title">See You Soon! 💕</div>
+            
+            <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3M2ptN2M5cXcwOTFqMTdreGQxeHRveGRzMmlnc243N25jMDNvY3VueSZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/UpLt2B2a4lnrYNpmeF/giphy.gif" alt="Romantic" class="final-gif">
+            <div class="final-message">
+                <p>Counting down the days until February 14th!</p>
+                <p>Get ready for the best Valentine's Day! 💕</p>
+            </div>
+
+            <div class="btn-group">
+                <!-- <button class="btn-secondary" id="btnBackFinal">Back to Edit</button> -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out-cubic',
+            once: false
+        });
+
+        // ===== MUSIC CONTROL =====
+        const bgMusic = document.getElementById('bgMusic');
+        const musicToggle = document.getElementById('musicToggle');
+        let musicEnabled = true;
+
+        // Auto-play music on user interaction
+        function startMusic() {
+            bgMusic.muted = false;
+            bgMusic.play().catch(() => {
+                console.log('Music auto-play blocked');
+            });
+        }
+
+        document.addEventListener('click', startMusic, { once: true });
+        document.addEventListener('touchstart', startMusic, { once: true });
+
+        musicToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (musicEnabled) {
+                bgMusic.pause();
+                musicToggle.classList.add('off');
+                musicToggle.textContent = '🔇';
+                musicEnabled = false;
+            } else {
+                bgMusic.play();
+                musicToggle.classList.remove('off');
+                musicToggle.textContent = '🔊';
+                musicEnabled = true;
+            }
+        });
+
+        // ===== FLOATING HEARTS =====
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('heartsBackground');
+            const hearts = ['💕', '❤️', '💖', '💗', '💓', '💞'];
+            
+            for (let i = 0; i < 12; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = '100%';
+                heart.style.animationDelay = i * 0.7 + 's';
+                heartsContainer.appendChild(heart);
+            }
+
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = '100%';
+                heart.style.animationDelay = '0s';
+                heartsContainer.appendChild(heart);
+
+                if (heartsContainer.children.length > 20) {
+                    heartsContainer.removeChild(heartsContainer.firstChild);
+                }
+            }, 2000);
+        }
+
+        // ===== SCREEN MANAGEMENT =====
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // ===== ENVELOPE SCREEN =====
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+        const letter = document.getElementById('letter');
+        let isOpened = false;
+        let hasResponded = false;
+
+        envelopeWrapper.addEventListener('click', () => {
+            if (!hasResponded) {
+                isOpened = !isOpened;
+                envelopeWrapper.classList.toggle('flap');
+                
+                // Show buttons when envelope opens
+                if (isOpened) {
+                    setTimeout(() => {
+                        const buttonGroup = document.getElementById('buttonGroup');
+                        buttonGroup.classList.add('show');
+                    }, 1500); // Show after letter animation completes
+                } else {
+                    // Hide buttons when envelope closes
+                    const buttonGroup = document.getElementById('buttonGroup');
+                    buttonGroup.classList.remove('show');
+                }
+            }
+        });
+
+        letter.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+
+        // ===== YES/NO BUTTONS =====
+        const btnYes = document.getElementById('btnYes');
+        const btnNo = document.getElementById('btnNo');
+        let noClickCount = 0;
+
+        btnYes.addEventListener('click', () => {
+            hasResponded = true;
+            const buttonGroup = document.getElementById('buttonGroup');
+            buttonGroup.classList.remove('show');
+            showScreen('locationScreen');
+            createConfetti();
+        });
+
+        btnNo.addEventListener('click', () => {
+            noClickCount++;
+            if (noClickCount === 1) {
+                btnNo.innerHTML = '<span>Try again? 😊</span>';
+            } else if (noClickCount === 2) {
+                btnNo.innerHTML = '<span>Come on... 💕</span>';
+            } else if (noClickCount === 3) {
+                btnNo.innerHTML = '<span>I know! 😘</span>';
+            } else if (noClickCount === 4) {
+                btnNo.innerHTML = '<span>Sure? 🥺</span>';
+            } else if (noClickCount === 5) {
+                btnNo.innerHTML = '<span>Really? 💔</span>';
+            } else if (noClickCount === 6) {
+                btnNo.innerHTML = '<span>BROKEN ❌</span>';
+                btnNo.classList.add('broken');
+                btnNo.disabled = true;
+            }
+        });
+
+        // ===== LOCATION SELECTION =====
+        const locationOptions = document.querySelectorAll('input[name="location"]');
+        const btnContinue = document.getElementById('btnContinue');
+        const btnBackLocation = document.getElementById('btnBackLocation');
+        let selectedLocation = '';
+
+        locationOptions.forEach(option => {
+            option.addEventListener('change', (e) => {
+                selectedLocation = e.target.value;
+                btnContinue.disabled = false;
+            });
+        });
+
+        btnContinue.addEventListener('click', () => {
+            if (selectedLocation) {
+                showScreen('activityScreen');
+                loadActivities(selectedLocation);
+            }
+        });
+
+        btnBackLocation.addEventListener('click', () => {
+            showScreen('envelopeScreen');
+            const buttonGroup = document.getElementById('buttonGroup');
+            buttonGroup.classList.remove('show');
+        });
+
+        // ===== ACTIVITY SELECTION =====
+        const activities = {
+            'Beach': ['🏄 Surfing', '🤿 Snorkeling', '🏐 Volleyball', '🌅 Sunset', '🍹 Picnic', '🎵 Dance'],
+            'Mall': ['🎮 Arcade', '🎬 Cinema', '🛍️ Shopping', '🍽️ Food', '🎡 Games', '📸 Photos'],
+            'Park': ['🚴 Biking', '🏃 Jogging', '🎣 Fishing', '🧗 Climbing', '🎪 Picnic', '🌸 Walk'],
+            'Cafe': ['☕ Coffee', '🍰 Desserts', '📚 Read', '🎮 Games', '🎵 Music', '💬 Chat'],
+            'Restaurant': ['🍝 Italian', '🍜 Sushi', '🥩 Steak', '🍲 Dining', '🍷 Wine', '🎂 Dessert']
+        };
+
+        const selectedActivities = [];
+
+        function loadActivities(location) {
+            const activityOptions = document.getElementById('activityOptions');
+            const locationTitle = document.getElementById('locationTitle');
+            
+            locationTitle.textContent = `🎯 At the ${location}?`;
+            activityOptions.innerHTML = '';
+            selectedActivities.length = 0;
+
+            activities[location].forEach((activity) => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-label';
+                label.innerHTML = `
+                    <input type="checkbox" name="activity" value="${activity}">
+                    <span>${activity}</span>
+                `;
+                
+                label.querySelector('input').addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        selectedActivities.push(e.target.value);
+                    } else {
+                        selectedActivities.splice(selectedActivities.indexOf(e.target.value), 1);
+                    }
+                    document.getElementById('btnContinueActivity').disabled = selectedActivities.length === 0;
+                });
+                
+                activityOptions.appendChild(label);
+            });
+        }
+
+        const btnContinueActivity = document.getElementById('btnContinueActivity');
+        const btnBackActivity = document.getElementById('btnBackActivity');
+
+        btnContinueActivity.addEventListener('click', () => {
+            if (selectedActivities.length > 0) {
+                showScreen('receiptScreen');
+                displayReceipt();
+            }
+        });
+
+        btnBackActivity.addEventListener('click', () => {
+            selectedActivities.length = 0;
+            locationOptions.forEach(option => option.checked = false);
+            selectedLocation = '';
+            btnContinue.disabled = true;
+            showScreen('locationScreen');
+        });
+
+        // ===== RECEIPT DISPLAY =====
+        function displayReceipt() {
+            document.getElementById('receiptLocation').textContent = selectedLocation;
+            document.getElementById('receiptActivities').textContent = selectedActivities.join(', ');
+        }
+
+        const btnDownload = document.getElementById('btnDownload');
+        const btnNext = document.getElementById('btnNext');
+        const btnBackReceipt = document.getElementById('btnBackReceipt');
+
+        btnDownload.addEventListener('click', () => {
+            downloadReceipt();
+        });
+
+        function downloadReceipt() {
+            const receiptText = `VALENTINE'S DAY RECEIPT\n======================\nDate: February 14, 2025\nLocation: ${selectedLocation}\nActivities: ${selectedActivities.join(', ')}\nWith: The One I Love 💕\n\nI can't wait to spend it with you! 💕\n═════════════════════════════════════\n            I LOVE YOU! 💕\n═════════════════════════════════════`;
+
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(receiptText));
+            element.setAttribute('download', 'Valentine_Receipt.txt');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        btnNext.addEventListener('click', () => {
+            showScreen('finalScreen');
+        });
+
+        btnBackReceipt.addEventListener('click', () => {
+            selectedActivities.length = 0;
+            locationOptions.forEach(option => option.checked = false);
+            selectedLocation = '';
+            btnContinue.disabled = true;
+            showScreen('locationScreen');
+        });
+
+        // ===== FINAL SCREEN =====
+        const btnBackFinal = document.getElementById('btnBackFinal');
+
+        btnBackFinal.addEventListener('click', () => {
+            showScreen('receiptScreen');
+        });
+
+        // ===== CONFETTI =====
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.innerHTML = ['💕', '❤️', '💖', '💗'][Math.floor(Math.random() * 4)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-10px';
+                confetti.style.fontSize = '20px';
+                confetti.style.background = 'transparent';
+                document.body.appendChild(confetti);
+
+                const duration = 2 + Math.random() * 1;
+                confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                });
+
+                setTimeout(() => confetti.remove(), duration * 1000);
+            }
+        }
+
+        // Initialize
+        createFloatingHearts();
+    </script>
+</body>
+</html>
